@@ -2,13 +2,55 @@
 name = "worker"
 version = "0.1.0"
 edition = "2024"
+authors = ["Klaus -- besufikad"]
+description = "Online Code judgig worker"
 
 [dependencies]
-tokio = { version = "1", features = ["full"] }
-redis = { version = "0.24", features = ["tokio-comp"] }
+# Async Runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Redis
+redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+
+# Database
+sqlx = { version = "0.7", features = [
+    "runtime-tokio-native-tls",
+    "postgres",
+    "chrono",
+    "migrate"
+] }
+
+# Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "postgres"] }
+
+# Configuration
+config = "0.14"
+dotenvy = "0.15"
+
+# Logging
 tracing = "0.1"
-tracing-subscriber = "0.3"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+
+# Error Handling
 anyhow = "1.0"
+thiserror = "1.0"
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Utils
+uuid = { version = "1.6", features = ["v4", "serde"] }
+
+[dev-dependencies]
+# Testing
+tokio-test = "0.4"
+mockall = "0.12"
+tempfile = "3.8"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
