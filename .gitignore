@@ -1,1 +1,63 @@
 /documentation
+
+
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.pid
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.turbo/
+.vercel/
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# Go (Gin)
+bin/
+build/
+tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.iml
+*.code-workspace
+.nvim/
+.history/
+
+# OS-specific
+Desktop.ini
