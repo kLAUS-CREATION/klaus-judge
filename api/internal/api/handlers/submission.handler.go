@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
 	"github.com/klaus-creations/klaus-judge/api/internal/services"
@@ -94,10 +95,16 @@ func (h *SubmissionHandler) ListAllSubmissions(c *gin.Context) {
 
 // getUserIDFromContext same as above.
 func (h *SubmissionHandler) getUserIDFromContext(c *gin.Context) uint {
-	userIDStr, exists := c.Get("user_id")
+	uid, exists := c.Get("user_id")
 	if !exists {
 		return 0
 	}
-	userID, _ := strconv.ParseUint(userIDStr.(string), 10, 32)
-	return uint(userID)
+
+	userID, ok := uid.(uint)
+	if !ok {
+		return 0
+	}
+
+	return userID
 }
+
