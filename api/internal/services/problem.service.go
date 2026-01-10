@@ -1,9 +1,10 @@
 package services
 
 import (
-	"errors"
 	"strings"
+
 	"github.com/gosimple/slug"
+	slugPkg "github.com/gosimple/slug"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
 	"github.com/klaus-creations/klaus-judge/api/internal/repository"
@@ -153,7 +154,7 @@ func (s *ProblemService) UpdateProblem(slug string, req *dto.UpdateProblemReques
 
 	if req.Title != "" {
 		problem.Title = req.Title
-		problem.Slug = slug.Make(req.Title)
+		problem.Slug = slugPkg.Make(req.Title)
 	}
 	if req.Description != "" {
 		problem.Description = req.Description
