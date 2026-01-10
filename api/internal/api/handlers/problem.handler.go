@@ -155,11 +155,16 @@ func (h *ProblemHandler) DeleteTestCase(c *gin.Context) {
 
 // getUserIDFromContext extracts user ID from context (same as auth).
 func (h *ProblemHandler) getUserIDFromContext(c *gin.Context) uint {
-	// Same implementation as in AuthHandler
-	userIDStr, exists := c.Get("user_id")
+	uid, exists := c.Get("user_id")
 	if !exists {
 		return 0
 	}
-	userID, _ := strconv.ParseUint(userIDStr.(string), 10, 32)
-	return uint(userID)
+
+	userID, ok := uid.(uint)
+	if !ok {
+		return 0
+	}
+
+	return userID
 }
+
