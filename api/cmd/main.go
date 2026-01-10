@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -13,10 +14,22 @@ func main() {
 	if err := config.LoadEnviromentVariables(); err != nil {
 		log.Fatal("failed to load env:", err)
 	}
+	// Connect Postgres Database
 	db, err := config.ConnectDatabase()
 	if err != nil {
 		log.Fatal("failed to connect database:", err)
 	}
+
+	// Connect Redis Database
+	_, err = config.ConnectRedis();
+	if (err != nil) {
+		log.Fatal("failed to connect redis:", err)
+	}
+
+	fmt.Println("Database Connected Successfully")
+	fmt.Println("Redis Connected Successfully")
+
+
 
 	if err := config.Migrate(db); err != nil {
 		log.Fatal("failed to migrate database:", err)
