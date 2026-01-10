@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/klaus-creations/klaus-judge/api/internal/config"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
 	"github.com/klaus-creations/klaus-judge/api/internal/repository"
@@ -15,13 +16,13 @@ import (
 type AuthService struct {
 	userRepo repository.UserRepository
 	jwtSecret string
-	accessTokenDuration time.Duration // e.g., 15m
-	refreshTokenDuration time.Duration // e.g., 7d
+	accessTokenDuration time.Duration
+	refreshTokenDuration time.Duration
 }
 
 // NewAuthService creates a new authentication service.
 func NewAuthService(userRepo repository.UserRepository) *AuthService {
-	jwtSecret := "your-secret-key" // Replace with config.GetEnv("JWT_SECRET")
+	jwtSecret := config.GetEnv("JWT_SECRET", "jwt_secret")
 	accessDuration := 15 * time.Minute
 	refreshDuration := 7 * 24 * time.Hour
 	return &AuthService{
@@ -211,7 +212,6 @@ func (s *AuthService) validateJWT(tokenStr string) (jwt.MapClaims, error) {
 	return nil, errors.New("invalid token")
 }
 
-// Logout could invalidate tokens, but since stateless JWT, perhaps just advise client to discard.
 func (s *AuthService) Logout() error {
 	// For stateless JWT, no server-side action needed.
 	return nil
