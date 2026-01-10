@@ -5,12 +5,12 @@ import (
 	"github.com/klaus-creations/klaus-judge/api/internal/api/handlers"
 )
 
-func RegisterAuthRoutes(
-	router *gin.Engine,
-	authHandler *handlers.AuthHandler,
-) {
-	auth := router.Group("/auth")
+func RegisterAuthRoutes(rg *gin.RouterGroup, h *handlers.AuthHandler) {
+	auth := rg.Group("/auth")
 	{
-		auth.POST("/signup", authHandler.SignUp)
+		auth.POST("/register", h.Register)
+		auth.POST("/login", h.Login)
+		auth.POST("/refresh", h.RefreshToken)
+		auth.POST("/logout", h.Logout)
 	}
 }
