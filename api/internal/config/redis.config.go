@@ -15,6 +15,11 @@ var (
 	ctx         = context.Background()
 )
 
+// GetRedisClient returns the initialized Redis client
+func GetRedisClient() *redis.Client {
+	return RedisClient
+}
+
 // ConnectRedis establishes a connection to Redis with production-ready settings
 func ConnectRedis() (*redis.Client, error) {
 	host := GetEnv("REDIS_HOST", "redis")
