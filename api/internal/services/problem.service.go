@@ -3,6 +3,7 @@ package services
 import (
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	slugPkg "github.com/gosimple/slug"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
@@ -12,20 +13,20 @@ import (
 
 // ProblemService handles problem-related business logic.
 type ProblemService struct {
-	problemRepo repository.ProblemRepository
+	problemRepo  repository.ProblemRepository
 	testCaseRepo repository.TestCaseRepository
 }
 
 // NewProblemService creates a new problem service.
 func NewProblemService(problemRepo repository.ProblemRepository, testCaseRepo repository.TestCaseRepository) *ProblemService {
 	return &ProblemService{
-		problemRepo: problemRepo,
+		problemRepo:  problemRepo,
 		testCaseRepo: testCaseRepo,
 	}
 }
 
 // CreateProblem creates a new problem.
-func (s *ProblemService) CreateProblem(req *dto.CreateProblemRequest, createdBy uint) (*domain.Problem, error) {
+func (s *ProblemService) CreateProblem(req *dto.CreateProblemRequest, createdBy uuid.UUID) (*domain.Problem, error) {
 	// Generate slug
 	slugStr := slug.Make(req.Title)
 	if _, err := s.problemRepo.FindBySlug(slugStr); err == nil {
@@ -33,14 +34,14 @@ func (s *ProblemService) CreateProblem(req *dto.CreateProblemRequest, createdBy 
 	}
 
 	problem := &domain.Problem{
-		Title:        req.Title,
-		Slug:         slugStr,
-		Description:  req.Description,
-		Difficulty:   req.Difficulty,
-		TimeLimit:    req.TimeLimit,
-		MemoryLimit:  req.MemoryLimit,
-		Tags:         strings.Join(req.Tags, ","),
-		CreatedBy:    createdBy,
+		Title:       req.Title,
+		Slug:        slugStr,
+		Description: req.Description,
+		Difficulty:  req.Difficulty,
+		TimeLimit:   req.TimeLimit,
+		MemoryLimit: req.MemoryLimit,
+		Tags:        strings.Join(req.Tags, ","),
+		CreatedBy:   createdBy,
 	}
 
 	if err := s.problemRepo.Create(problem); err != nil {
@@ -93,17 +94,17 @@ func (s *ProblemService) GetProblem(slug string, includeHiddenTestCases bool) (*
 	tags := strings.Split(problem.Tags, ",")
 
 	return &dto.ProblemResponse{
-		ID:             problem.ID,
-		Title:          problem.Title,
-		Slug:           problem.Slug,
-		Description:    problem.Description,
-		Difficulty:     problem.Difficulty,
-		TimeLimit:      problem.TimeLimit,
-		MemoryLimit:    problem.MemoryLimit,
-		Tags:           tags,
-		AcceptedCount:  problem.AcceptedCount,
+		ID:              problem.ID,
+		Title:           problem.Title,
+		Slug:            problem.Slug,
+		Description:     problem.Description,
+		Difficulty:      problem.Difficulty,
+		TimeLimit:       problem.TimeLimit,
+		MemoryLimit:     problem.MemoryLimit,
+		Tags:            tags,
+		AcceptedCount:   problem.AcceptedCount,
 		SubmissionCount: problem.SubmissionCount,
-		TestCases:      filteredTestCases,
+		TestCases:       filteredTestCases,
 	}, nil
 }
 
@@ -127,12 +128,12 @@ func (s *ProblemService) ListProblems(pagination *dto.PaginationRequest, filters
 	for _, p := range problems {
 		tags := strings.Split(p.Tags, ",")
 		problemDTOs = append(problemDTOs, dto.ProblemSummaryDTO{
-			ID:             p.ID,
-			Title:          p.Title,
-			Slug:           p.Slug,
-			Difficulty:     p.Difficulty,
-			Tags:           tags,
-			AcceptedCount:  p.AcceptedCount,
+			ID:              p.ID,
+			Title:           p.Title,
+			Slug:            p.Slug,
+			Difficulty:      p.Difficulty,
+			Tags:            tags,
+			AcceptedCount:   p.AcceptedCount,
 			SubmissionCount: p.SubmissionCount,
 		})
 	}
@@ -210,7 +211,7 @@ func (s *ProblemService) AddTestCase(slug string, req *dto.TestCaseRequest) (*do
 }
 
 // UpdateTestCase updates a test case.
-func (s *ProblemService) UpdateTestCase(id uint, req *dto.TestCaseRequest) (*domain.TestCase, error) {
+func (s *ProblemService) UpdateTestCase(id uuid.UUID, req *dto.TestCaseRequest) (*domain.TestCase, error) {
 	testCase, err := s.testCaseRepo.FindByID(id)
 	if err != nil {
 		return nil, err
@@ -237,6 +238,6 @@ func (s *ProblemService) UpdateTestCase(id uint, req *dto.TestCaseRequest) (*dom
 }
 
 // DeleteTestCase deletes a test case.
-func (s *ProblemService) DeleteTestCase(id uint) error {
+func (s *ProblemService) DeleteTestCase(id uuid.UUID) error {
 	return s.testCaseRepo.Delete(id)
 }

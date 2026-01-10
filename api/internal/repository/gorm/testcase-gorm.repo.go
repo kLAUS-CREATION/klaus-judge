@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"gorm.io/gorm"
 )
@@ -21,9 +22,9 @@ func (r *TestCaseRepository) Create(testCase *domain.TestCase) error {
 }
 
 // FindByID retrieves a test case by ID.
-func (r *TestCaseRepository) FindByID(id uint) (*domain.TestCase, error) {
+func (r *TestCaseRepository) FindByID(id uuid.UUID) (*domain.TestCase, error) {
 	var testCase domain.TestCase
-	err := r.db.First(&testCase, id).Error
+	err := r.db.First(&testCase, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +32,7 @@ func (r *TestCaseRepository) FindByID(id uint) (*domain.TestCase, error) {
 }
 
 // FindByProblemID retrieves all test cases for a problem.
-func (r *TestCaseRepository) FindByProblemID(problemID uint) ([]*domain.TestCase, error) {
+func (r *TestCaseRepository) FindByProblemID(problemID uuid.UUID) ([]*domain.TestCase, error) {
 	var testCases []*domain.TestCase
 	err := r.db.Where("problem_id = ?", problemID).Order("order_index ASC").Find(&testCases).Error
 	if err != nil {
@@ -46,6 +47,6 @@ func (r *TestCaseRepository) Update(testCase *domain.TestCase) error {
 }
 
 // Delete removes a test case by ID.
-func (r *TestCaseRepository) Delete(id uint) error {
-	return r.db.Delete(&domain.TestCase{}, id).Error
+func (r *TestCaseRepository) Delete(id uuid.UUID) error {
+	return r.db.Delete(&domain.TestCase{}, "id = ?", id).Error
 }

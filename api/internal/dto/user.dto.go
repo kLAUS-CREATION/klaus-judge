@@ -1,7 +1,10 @@
 package dto
 
-import "time"
+import (
+	"time"
 
+	"github.com/google/uuid"
+)
 
 // ALL REQUESTS RELATED TO USER
 // SignUpRequest is used for user registration.
@@ -32,19 +35,19 @@ type RefreshTokenRequest struct {
 // ALL RESPONSES RELATED TO USER
 // UserResponse is a safe response without sensitive data.
 type UserResponse struct {
-	ID       uint   `json:"id"`
-	FullName string `json:"full_name"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Role     string `json:"role"`
-	Verified bool   `json:"verified"`
+	ID        uuid.UUID `json:"id"`
+	FullName  string    `json:"full_name"`
+	Email     string    `json:"email"`
+	Username  string    `json:"username"`
+	Role      string    `json:"role"`
+	Verified  bool      `json:"verified"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 // UserStatsResponse for user statistics in online judge context.
 type UserStatsResponse struct {
-	SolvedProblems int `json:"solved_problems"`
-	Rating         int `json:"rating"`
+	SolvedProblems int       `json:"solved_problems"`
+	Rating         int       `json:"rating"`
 	LastLogin      time.Time `json:"last_login"`
 }
 

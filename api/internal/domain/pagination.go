@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/google/uuid"
+
 type Pagination struct {
 	Limit  int
 	Offset int
@@ -11,6 +13,6 @@ type ProblemFilters struct {
 }
 
 type SubmissionFilters struct {
-	ProblemID uint
+	ProblemID uuid.UUID
 	Verdict   string
 }

@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
+
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
 	"github.com/klaus-creations/klaus-judge/api/internal/services"
 )
@@ -21,7 +22,7 @@ func NewProblemHandler(problemService *services.ProblemService) *ProblemHandler 
 // CreateProblem handles problem creation.
 func (h *ProblemHandler) CreateProblem(c *gin.Context) {
 	userID := h.getUserIDFromContext(c)
-	if userID == 0 {
+	if userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -123,7 +124,11 @@ func (h *ProblemHandler) AddTestCase(c *gin.Context) {
 // UpdateTestCase handles updating a test case.
 func (h *ProblemHandler) UpdateTestCase(c *gin.Context) {
 	idStr := c.Param("id")
-	id, _ := strconv.ParseUint(idStr, 10, 32)
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid test case id"})
+		return
+	}
 
 	var req dto.TestCaseRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -131,7 +136,7 @@ func (h *ProblemHandler) UpdateTestCase(c *gin.Context) {
 		return
 	}
 
-	testCase, err := h.problemService.UpdateTestCase(uint(id), &req)
+	testCase, err := h.problemService.UpdateTestCase(id, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -143,9 +148,13 @@ func (h *ProblemHandler) UpdateTestCase(c *gin.Context) {
 // DeleteTestCase handles deleting a test case.
 func (h *ProblemHandler) DeleteTestCase(c *gin.Context) {
 	idStr := c.Param("id")
-	id, _ := strconv.ParseUint(idStr, 10, 32)
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid test case id"})
+		return
+	}
 
-	if err := h.problemService.DeleteTestCase(uint(id)); err != nil {
+	if err := h.problemService.DeleteTestCase(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -154,17 +163,16 @@ func (h *ProblemHandler) DeleteTestCase(c *gin.Context) {
 }
 
 // getUserIDFromContext extracts user ID from context (same as auth).
-func (h *ProblemHandler) getUserIDFromContext(c *gin.Context) uint {
+func (h *ProblemHandler) getUserIDFromContext(c *gin.Context) uuid.UUID {
 	uid, exists := c.Get("user_id")
 	if !exists {
-		return 0
+		return uuid.Nil
 	}
 
-	userID, ok := uid.(uint)
+	userID, ok := uid.(uuid.UUID)
 	if !ok {
-		return 0
+		return uuid.Nil
 	}
 
 	return userID
 }
-

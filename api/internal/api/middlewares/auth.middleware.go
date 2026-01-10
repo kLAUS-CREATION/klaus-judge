@@ -7,7 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/klaus-creations/klaus-judge/api/internal/config" )
+	"github.com/google/uuid"
+	"github.com/klaus-creations/klaus-judge/api/internal/config"
+)
 
 // AuthMiddleware validates JWT token and sets user context.
 func AuthMiddleware() gin.HandlerFunc {
@@ -34,8 +36,21 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userID := uint(claims["user_id"].(float64))
-		role := claims["role"].(string)
+		userIDStr, ok := claims["user_id"].(string)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token claims"})
+			c.Abort()
+			return
+		}
+
+		userID, err := uuid.Parse(userIDStr)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user id in token"})
+			c.Abort()
+			return
+		}
+
+		role, _ := claims["role"].(string)
 
 		c.Set("user_id", userID)
 		c.Set("role", role)

@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"gorm.io/gorm"
 )
@@ -41,9 +42,9 @@ func (r *UserRepository) FindByUsername(username string) (*domain.User, error) {
 }
 
 // FindByID retrieves a user by ID.
-func (r *UserRepository) FindByID(id uint) (*domain.User, error) {
+func (r *UserRepository) FindByID(id uuid.UUID) (*domain.User, error) {
 	var user domain.User
-	err := r.db.First(&user, id).Error
+	err := r.db.First(&user, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}

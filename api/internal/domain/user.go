@@ -1,9 +1,14 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type User struct {
-	ID            uint      `gorm:"primaryKey"`
+	ID            uuid.UUID `gorm:"primaryKey;type:uuid"`
 	FullName      string    `gorm:"not null"`
 	Email         string    `gorm:"uniqueIndex;not null"`
 	Username      string    `gorm:"uniqueIndex;not null"`
@@ -15,4 +20,11 @@ type User struct {
 	Rating        int       `gorm:"default:1000"`
 	CreatedAt     time.Time `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if u.ID == uuid.Nil {
+		u.ID, err = uuid.NewV7()
+	}
+	return
 }

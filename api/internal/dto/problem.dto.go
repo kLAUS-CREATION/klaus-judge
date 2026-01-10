@@ -1,19 +1,22 @@
 package dto
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"strconv"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 )
 
 type CreateProblemRequest struct {
-	Title        string          `json:"title" binding:"required"`
-	Description  string          `json:"description" binding:"required"`
-	Difficulty   string          `json:"difficulty" binding:"required"`
-	TimeLimit    int             `json:"time_limit" binding:"required"`
-	MemoryLimit  int             `json:"memory_limit" binding:"required"`
-	Tags         []string        `json:"tags"`
-	TestCases    []TestCaseDTO   `json:"test_cases"`
+	Title       string        `json:"title" binding:"required"`
+	Description string        `json:"description" binding:"required"`
+	Difficulty  string        `json:"difficulty" binding:"required"`
+	TimeLimit   int           `json:"time_limit" binding:"required"`
+	MemoryLimit int           `json:"memory_limit" binding:"required"`
+	Tags        []string      `json:"tags"`
+	TestCases   []TestCaseDTO `json:"test_cases"`
 }
 
 type UpdateProblemRequest struct {
@@ -26,27 +29,27 @@ type UpdateProblemRequest struct {
 }
 
 type ProblemResponse struct {
-	ID             uint              `json:"id"`
-	Title          string            `json:"title"`
-	Slug           string            `json:"slug"`
-	Description    string            `json:"description"`
-	Difficulty     string            `json:"difficulty"`
-	TimeLimit      int               `json:"time_limit"`
-	MemoryLimit    int               `json:"memory_limit"`
-	Tags           []string          `json:"tags"`
-	AcceptedCount  int               `json:"accepted_count"`
-	SubmissionCount int              `json:"submission_count"`
-	TestCases      []TestCaseDTO     `json:"test_cases"`
+	ID              uuid.UUID     `json:"id"`
+	Title           string        `json:"title"`
+	Slug            string        `json:"slug"`
+	Description     string        `json:"description"`
+	Difficulty      string        `json:"difficulty"`
+	TimeLimit       int           `json:"time_limit"`
+	MemoryLimit     int           `json:"memory_limit"`
+	Tags            []string      `json:"tags"`
+	AcceptedCount   int           `json:"accepted_count"`
+	SubmissionCount int           `json:"submission_count"`
+	TestCases       []TestCaseDTO `json:"test_cases"`
 }
 
 type ProblemSummaryDTO struct {
-	ID             uint     `json:"id"`
-	Title          string   `json:"title"`
-	Slug           string   `json:"slug"`
-	Difficulty     string   `json:"difficulty"`
-	Tags           []string `json:"tags"`
-	AcceptedCount  int      `json:"accepted_count"`
-	SubmissionCount int     `json:"submission_count"`
+	ID              uuid.UUID `json:"id"`
+	Title           string    `json:"title"`
+	Slug            string    `json:"slug"`
+	Difficulty      string    `json:"difficulty"`
+	Tags            []string  `json:"tags"`
+	AcceptedCount   int       `json:"accepted_count"`
+	SubmissionCount int       `json:"submission_count"`
 }
 
 type ProblemListResponse struct {
@@ -65,11 +68,11 @@ type TestCaseRequest struct {
 }
 
 type TestCaseDTO struct {
-	ID             uint   `json:"id"`
-	Input          string `json:"input"`
-	ExpectedOutput string `json:"expected_output"`
-	IsSample       bool   `json:"is_sample"`
-	Points         int    `json:"points"`
+	ID             uuid.UUID `json:"id"`
+	Input          string    `json:"input"`
+	ExpectedOutput string    `json:"expected_output"`
+	IsSample       bool      `json:"is_sample"`
+	Points         int       `json:"points"`
 }
 
 type PaginationRequest struct {
@@ -99,11 +102,24 @@ func ParseProblemFilters(c *gin.Context) *ProblemFilters {
 }
 
 func ProblemResponseFromDomain(p *domain.Problem) *ProblemResponse {
-	// Implement conversion if needed
+	var tags []string
+	if p.Tags != "" {
+		tags = strings.Split(p.Tags, ",")
+	} else {
+		tags = []string{}
+	}
+
 	return &ProblemResponse{
-		ID: p.ID,
-		// ...
+		ID:              p.ID,
+		Title:           p.Title,
+		Slug:            p.Slug,
+		Description:     p.Description,
+		Difficulty:      p.Difficulty,
+		TimeLimit:       p.TimeLimit,
+		MemoryLimit:     p.MemoryLimit,
+		Tags:            tags,
+		AcceptedCount:   p.AcceptedCount,
+		SubmissionCount: p.SubmissionCount,
+		TestCases:       []TestCaseDTO{}, // Test cases are usually fetched separately or need more context
 	}
 }
-
-// Similarly for other DTOs

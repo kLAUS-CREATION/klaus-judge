@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/config"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
@@ -14,9 +15,9 @@ import (
 
 // AuthService handles authentication and user-related business logic.
 type AuthService struct {
-	userRepo repository.UserRepository
-	jwtSecret string
-	accessTokenDuration time.Duration
+	userRepo             repository.UserRepository
+	jwtSecret            string
+	accessTokenDuration  time.Duration
 	refreshTokenDuration time.Duration
 }
 
@@ -26,9 +27,9 @@ func NewAuthService(userRepo repository.UserRepository) *AuthService {
 	accessDuration := 15 * time.Minute
 	refreshDuration := 7 * 24 * time.Hour
 	return &AuthService{
-		userRepo: userRepo,
-		jwtSecret: jwtSecret,
-		accessTokenDuration: accessDuration,
+		userRepo:             userRepo,
+		jwtSecret:            jwtSecret,
+		accessTokenDuration:  accessDuration,
 		refreshTokenDuration: refreshDuration,
 	}
 }
@@ -104,7 +105,15 @@ func (s *AuthService) RefreshToken(refreshToken string) (*dto.AuthResponse, erro
 		return nil, err
 	}
 
-	userID := uint(claims["user_id"].(float64))
+	userIDStr, ok := claims["user_id"].(string)
+	if !ok {
+		return nil, errors.New("invalid token claims")
+	}
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return nil, errors.New("invalid user id in token")
+	}
+
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, errors.New("user not found")
@@ -123,7 +132,7 @@ func (s *AuthService) RefreshToken(refreshToken string) (*dto.AuthResponse, erro
 }
 
 // GetProfile retrieves user profile.
-func (s *AuthService) GetProfile(userID uint) (*dto.UserResponse, error) {
+func (s *AuthService) GetProfile(userID uuid.UUID) (*dto.UserResponse, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, err
@@ -140,7 +149,7 @@ func (s *AuthService) GetProfile(userID uint) (*dto.UserResponse, error) {
 }
 
 // UpdateProfile updates user details.
-func (s *AuthService) UpdateProfile(userID uint, req *dto.UpdateProfileRequest) (*dto.UserResponse, error) {
+func (s *AuthService) UpdateProfile(userID uuid.UUID, req *dto.UpdateProfileRequest) (*dto.UserResponse, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, err
@@ -172,7 +181,7 @@ func (s *AuthService) UpdateProfile(userID uint, req *dto.UpdateProfileRequest) 
 }
 
 // GetStats retrieves user statistics.
-func (s *AuthService) GetStats(userID uint) (*dto.UserStatsResponse, error) {
+func (s *AuthService) GetStats(userID uuid.UUID) (*dto.UserStatsResponse, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, err
@@ -187,7 +196,7 @@ func (s *AuthService) GetStats(userID uint) (*dto.UserStatsResponse, error) {
 // generateJWT creates a JWT token.
 func (s *AuthService) generateJWT(user *domain.User, duration time.Duration) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": user.ID,
+		"user_id": user.ID.String(),
 		"role":    user.Role,
 		"exp":     time.Now().Add(duration).Unix(),
 	}

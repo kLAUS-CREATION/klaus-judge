@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"gorm.io/gorm"
 )
@@ -21,9 +22,9 @@ func (r *ProblemRepository) Create(problem *domain.Problem) error {
 }
 
 // FindByID retrieves a problem by ID.
-func (r *ProblemRepository) FindByID(id uint) (*domain.Problem, error) {
+func (r *ProblemRepository) FindByID(id uuid.UUID) (*domain.Problem, error) {
 	var problem domain.Problem
-	err := r.db.First(&problem, id).Error
+	err := r.db.First(&problem, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func (r *ProblemRepository) FindAll(pagination *domain.Pagination, filters *doma
 		return nil, 0, err
 	}
 
-	err = query.Limit(pagination.Limit).Offset(pagination.Offset).Order("id DESC").Find(&problems).Error
+	err = query.Limit(pagination.Limit).Offset(pagination.Offset).Order("created_at DESC").Find(&problems).Error
 	if err != nil {
 		return nil, 0, err
 	}
@@ -73,16 +74,16 @@ func (r *ProblemRepository) Update(problem *domain.Problem) error {
 }
 
 // Delete removes a problem by ID.
-func (r *ProblemRepository) Delete(id uint) error {
-	return r.db.Delete(&domain.Problem{}, id).Error
+func (r *ProblemRepository) Delete(id uuid.UUID) error {
+	return r.db.Delete(&domain.Problem{}, "id = ?", id).Error
 }
 
 // IncrementAcceptedCount increments the accepted count for a problem.
-func (r *ProblemRepository) IncrementAcceptedCount(id uint) error {
+func (r *ProblemRepository) IncrementAcceptedCount(id uuid.UUID) error {
 	return r.db.Model(&domain.Problem{}).Where("id = ?", id).Update("accepted_count", gorm.Expr("accepted_count + 1")).Error
 }
 
 // IncrementSubmissionCount increments the submission count for a problem.
-func (r *ProblemRepository) IncrementSubmissionCount(id uint) error {
+func (r *ProblemRepository) IncrementSubmissionCount(id uuid.UUID) error {
 	return r.db.Model(&domain.Problem{}).Where("id = ?", id).Update("submission_count", gorm.Expr("submission_count + 1")).Error
 }

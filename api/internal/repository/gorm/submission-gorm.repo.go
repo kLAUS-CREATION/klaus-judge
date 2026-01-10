@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"gorm.io/gorm"
 )
@@ -21,9 +22,9 @@ func (r *SubmissionRepository) Create(submission *domain.Submission) error {
 }
 
 // FindByID retrieves a submission by ID.
-func (r *SubmissionRepository) FindByID(id uint) (*domain.Submission, error) {
+func (r *SubmissionRepository) FindByID(id uuid.UUID) (*domain.Submission, error) {
 	var submission domain.Submission
-	err := r.db.Preload("TestResults").First(&submission, id).Error
+	err := r.db.Preload("TestResults").First(&submission, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +32,7 @@ func (r *SubmissionRepository) FindByID(id uint) (*domain.Submission, error) {
 }
 
 // FindByUserID retrieves submissions for a user with pagination.
-func (r *SubmissionRepository) FindByUserID(userID uint, pagination *domain.Pagination) ([]*domain.Submission, int64, error) {
+func (r *SubmissionRepository) FindByUserID(userID uuid.UUID, pagination *domain.Pagination) ([]*domain.Submission, int64, error) {
 	var submissions []*domain.Submission
 	var total int64
 
@@ -55,7 +56,7 @@ func (r *SubmissionRepository) FindAll(pagination *domain.Pagination, filters *d
 
 	query := r.db.Model(&domain.Submission{})
 	if filters != nil {
-		if filters.ProblemID != 0 {
+		if filters.ProblemID != uuid.Nil {
 			query = query.Where("problem_id = ?", filters.ProblemID)
 		}
 		if filters.Verdict != "" {

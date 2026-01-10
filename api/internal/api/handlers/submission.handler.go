@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
 	"github.com/klaus-creations/klaus-judge/api/internal/services"
 )
@@ -22,7 +22,7 @@ func NewSubmissionHandler(submissionService *services.SubmissionService) *Submis
 // SubmitSolution handles code submission.
 func (h *SubmissionHandler) SubmitSolution(c *gin.Context) {
 	userID := h.getUserIDFromContext(c)
-	if userID == 0 {
+	if userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -51,12 +51,17 @@ func (h *SubmissionHandler) SubmitSolution(c *gin.Context) {
 // GetSubmission handles getting a submission.
 func (h *SubmissionHandler) GetSubmission(c *gin.Context) {
 	idStr := c.Param("id")
-	id, _ := strconv.ParseUint(idStr, 10, 32)
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid submission id"})
+		return
+	}
+
 	userID := h.getUserIDFromContext(c)
 	role, _ := c.Get("role")
 	isAdmin := role == "admin"
 
-	resp, err := h.submissionService.GetSubmission(uint(id), userID, isAdmin)
+	resp, err := h.submissionService.GetSubmission(id, userID, isAdmin)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -68,6 +73,11 @@ func (h *SubmissionHandler) GetSubmission(c *gin.Context) {
 // ListMySubmissions handles listing user's submissions.
 func (h *SubmissionHandler) ListMySubmissions(c *gin.Context) {
 	userID := h.getUserIDFromContext(c)
+	if userID == uuid.Nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
 	pagination := dto.ParsePagination(c)
 
 	resp, err := h.submissionService.ListMySubmissions(userID, pagination)
@@ -94,17 +104,16 @@ func (h *SubmissionHandler) ListAllSubmissions(c *gin.Context) {
 }
 
 // getUserIDFromContext same as above.
-func (h *SubmissionHandler) getUserIDFromContext(c *gin.Context) uint {
+func (h *SubmissionHandler) getUserIDFromContext(c *gin.Context) uuid.UUID {
 	uid, exists := c.Get("user_id")
 	if !exists {
-		return 0
+		return uuid.Nil
 	}
 
-	userID, ok := uid.(uint)
+	userID, ok := uid.(uuid.UUID)
 	if !ok {
-		return 0
+		return uuid.Nil
 	}
 
 	return userID
 }
-

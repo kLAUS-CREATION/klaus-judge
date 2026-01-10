@@ -3,6 +3,8 @@ package services
 import (
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/config"
 	"github.com/klaus-creations/klaus-judge/api/internal/domain"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
@@ -33,7 +35,7 @@ func NewSubmissionService(
 }
 
 // SubmitSolution creates a new submission and queues it for judging.
-func (s *SubmissionService) SubmitSolution(req *dto.SubmitRequest, userID uint, ipAddress string) (*domain.Submission, error) {
+func (s *SubmissionService) SubmitSolution(req *dto.SubmitRequest, userID uuid.UUID, ipAddress string) (*domain.Submission, error) {
 	problem, err := s.problemRepo.FindBySlug(req.Slug)
 	if err != nil {
 		return nil, errors.New("problem not found")
@@ -44,13 +46,13 @@ func (s *SubmissionService) SubmitSolution(req *dto.SubmitRequest, userID uint, 
 	}
 
 	submission := &domain.Submission{
-		UserID:       userID,
-		ProblemID:    problem.ID,
-		Code:         req.Code,
-		Language:     req.Language,
-		Verdict:      domain.VerdictQueued,
-		IPAddress:    ipAddress,
-		SubmittedAt:  time.Now(),
+		UserID:      userID,
+		ProblemID:   problem.ID,
+		Code:        req.Code,
+		Language:    req.Language,
+		Verdict:     domain.VerdictQueued,
+		IPAddress:   ipAddress,
+		SubmittedAt: time.Now(),
 	}
 
 	if err := s.submissionRepo.Create(submission); err != nil {
@@ -71,7 +73,7 @@ func (s *SubmissionService) SubmitSolution(req *dto.SubmitRequest, userID uint, 
 }
 
 // GetSubmission retrieves a submission details.
-func (s *SubmissionService) GetSubmission(id uint, userID uint, isAdmin bool) (*dto.SubmissionResponse, error) {
+func (s *SubmissionService) GetSubmission(id uuid.UUID, userID uuid.UUID, isAdmin bool) (*dto.SubmissionResponse, error) {
 	submission, err := s.submissionRepo.FindByID(id)
 	if err != nil {
 		return nil, err
@@ -110,7 +112,7 @@ func (s *SubmissionService) GetSubmission(id uint, userID uint, isAdmin bool) (*
 }
 
 // ListMySubmissions lists submissions for the current user.
-func (s *SubmissionService) ListMySubmissions(userID uint, pagination *dto.PaginationRequest) (*dto.SubmissionListResponse, error) {
+func (s *SubmissionService) ListMySubmissions(userID uuid.UUID, pagination *dto.PaginationRequest) (*dto.SubmissionListResponse, error) {
 	domainPagination := &domain.Pagination{
 		Limit:  pagination.Limit,
 		Offset: pagination.Page * pagination.Limit,
@@ -175,7 +177,7 @@ func (s *SubmissionService) ListAllSubmissions(pagination *dto.PaginationRequest
 }
 
 // UpdateSubmissionAfterJudging updates the submission after judging (called by worker).
-func (s *SubmissionService) UpdateSubmissionAfterJudging(submissionID uint, verdict string, executionTime int, memoryUsed int, score float64, testsPassed int, testsFailed int, testResults []*domain.TestCaseResult) error {
+func (s *SubmissionService) UpdateSubmissionAfterJudging(submissionID uuid.UUID, verdict string, executionTime int, memoryUsed int, score float64, testsPassed int, testsFailed int, testResults []*domain.TestCaseResult) error {
 	submission, err := s.submissionRepo.FindByID(submissionID)
 	if err != nil {
 		return err

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/klaus-creations/klaus-judge/api/internal/dto"
 	"github.com/klaus-creations/klaus-judge/api/internal/services"
 )
@@ -101,7 +101,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 // GetProfile retrieves the current user's profile.
 func (h *AuthHandler) GetProfile(c *gin.Context) {
 	userID := h.getUserIDFromContext(c)
-	if userID == 0 {
+	if userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -118,7 +118,7 @@ func (h *AuthHandler) GetProfile(c *gin.Context) {
 // UpdateProfile updates the current user's profile.
 func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 	userID := h.getUserIDFromContext(c)
-	if userID == 0 {
+	if userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -141,7 +141,7 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 // GetStats retrieves the current user's stats.
 func (h *AuthHandler) GetStats(c *gin.Context) {
 	userID := h.getUserIDFromContext(c)
-	if userID == 0 {
+	if userID == uuid.Nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
@@ -156,11 +156,10 @@ func (h *AuthHandler) GetStats(c *gin.Context) {
 }
 
 // getUserIDFromContext extracts user ID from Gin context (assuming set by middleware).
-func (h *AuthHandler) getUserIDFromContext(c *gin.Context) uint {
-	userIDStr, exists := c.Get("user_id")
+func (h *AuthHandler) getUserIDFromContext(c *gin.Context) uuid.UUID {
+	userID, exists := c.Get("user_id")
 	if !exists {
-		return 0
+		return uuid.Nil
 	}
-	userID, _ := strconv.ParseUint(userIDStr.(string), 10, 32)
-	return uint(userID)
+	return userID.(uuid.UUID)
 }
