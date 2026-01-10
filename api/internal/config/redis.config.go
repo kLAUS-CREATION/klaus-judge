@@ -26,7 +26,7 @@ func ConnectRedis() (*redis.Client, error) {
 
 	// Redis Client
 	client := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", host, port),
+		Addr:     fmt.Sprintf("%s:%d", host, port),
 		Password: password,
 		DB:       0, // use default DB
 
@@ -40,7 +40,7 @@ func ConnectRedis() (*redis.Client, error) {
 
 		// Keep connection alive
 		PoolTimeout:  4 * time.Second,
-		IdleTimeout:  5 * time.Minute,
+		ConnMaxIdleTime:  5 * time.Minute,
 		MaxIdleConns: 10,
 	})
 
