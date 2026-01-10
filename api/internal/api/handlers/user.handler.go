@@ -157,9 +157,15 @@ func (h *AuthHandler) GetStats(c *gin.Context) {
 
 // getUserIDFromContext extracts user ID from Gin context (assuming set by middleware).
 func (h *AuthHandler) getUserIDFromContext(c *gin.Context) uuid.UUID {
-	userID, exists := c.Get("user_id")
+	uid, exists := c.Get("user_id")
 	if !exists {
 		return uuid.Nil
 	}
-	return userID.(uuid.UUID)
+
+	userID, ok := uid.(uuid.UUID)
+	if !ok {
+		return uuid.Nil
+	}
+
+	return userID
 }
