@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -39,9 +40,9 @@ func ConnectRedis() (*redis.Client, error) {
 		WriteTimeout: 3 * time.Second, // timeout for socket writes
 
 		// Keep connection alive
-		PoolTimeout:  4 * time.Second,
-		ConnMaxIdleTime:  5 * time.Minute,
-		MaxIdleConns: 10,
+		PoolTimeout:     4 * time.Second,
+		ConnMaxIdleTime: 5 * time.Minute,
+		MaxIdleConns:    10,
 	})
 
 	// Test connection
@@ -64,36 +65,33 @@ func CloseRedis() error {
 	return nil
 }
 
-
 // PushSubmissionJob adds a submission ID to the judge queue
-func PushSubmissionJob(submissionID uint) error {
+func PushSubmissionJob(submissionID uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	// LPUSH adds to the left (head) of the list
-	return RedisClient.LPush(ctx, "judge_queue", submissionID).Err()
+	return RedisClient.LPush(ctx, "judge_queue", submissionID.String()).Err()
 }
 
 // PopSubmissionJob retrieves a submission ID from the queue (blocking)
 // This is used by the worker - blocks until a job is available
-func PopSubmissionJob(timeout time.Duration) (uint, error) {
+func PopSubmissionJob(timeout time.Duration) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	// BRPOP blocks until an item is available or timeout
 	result, err := RedisClient.BRPop(ctx, timeout, "judge_queue").Result()
 	if err != nil {
-		return 0, err
+		return uuid.Nil, err
 	}
 
 	// result[0] is the key name, result[1] is the value
 	if len(result) < 2 {
-		return 0, fmt.Errorf("invalid queue response")
+		return uuid.Nil, fmt.Errorf("invalid queue response")
 	}
 
-	var submissionID uint
-	_, err = fmt.Sscanf(result[1], "%d", &submissionID)
-	return submissionID, err
+	return uuid.Parse(result[1])
 }
 
 // GetQueueLength returns the number of pending jobs
@@ -137,4 +135,3 @@ func DeleteCache(key string) error {
 
 	return RedisClient.Del(ctx, key).Err()
 }
-
