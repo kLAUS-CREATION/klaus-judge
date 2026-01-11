@@ -17,15 +17,11 @@ export default function AuthLayout({
         <div className="flex flex-col lg:flex-row h-full">
           <div className="w-full lg:w-[45%] xl:w-[40%] flex flex-col gap-6 items-center justify-center p-8 lg:p-12">
             <div className="w-full">{children}</div>
-
-            {/* <div className="w-full"> */}
-            {/*   <OAuth /> */}
-            {/* </div> */}
           </div>
 
           <div className="relative hidden lg:block lg:w-[55%] xl:w-[60%] h-full items-center justify-center overflow-hidden ">
             <div className="w-full h-[20%] flex flex-col items-center justify-center text-center">
-              <h1 className="text-3xl md:text-5xl font-light leading-tight ">
+              <h1 className="text-xl md:text-2xl 2xl:text-3xl font-light leading-tight ">
                 See What&apos;s Happening <br />
                 this{" "}
                 <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -35,16 +31,11 @@ export default function AuthLayout({
               </h1>
             </div>
 
-            {/* Image Stack */}
             <div className="relative w-full h-[80%] flex items-start justify-center">
-              Image In Here
+              <Image src={'/auth1.png'} alt="auth" fill className="object-contain" />
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm">
-        Join a community that values meaningful conversation
       </div>
     </div>
   );
