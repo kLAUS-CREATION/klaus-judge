@@ -5,8 +5,18 @@ import {
     getProfile,
     logout,
     updateProfile,
+    forgotPassword,
+    resetPassword,
+    verifyEmail,
 } from "@/features/api/auth.api";
-import { LoginRequest, RegisterRequest, UpdateProfileRequest } from "@/types/users";
+import {
+    LoginRequest,
+    RegisterRequest,
+    UpdateProfileRequest,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    VerifyEmailRequest
+} from "@/types/users";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"; // Assuming sonner is used for toasts based on package.json
 
@@ -85,6 +95,46 @@ export const useLogout = () => {
         },
         onError: () => {
             toast.error("Logout failed");
+        },
+    });
+};
+
+export const useForgotPassword = () => {
+    return useMutation({
+        mutationFn: (data: ForgotPasswordRequest) => forgotPassword(data),
+        onSuccess: () => {
+            toast.success("If your email is registered, you will receive a password reset link.");
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.error || "Failed to send reset link");
+        },
+    });
+};
+
+export const useResetPassword = () => {
+    const router = useRouter();
+    return useMutation({
+        mutationFn: (data: ResetPasswordRequest) => resetPassword(data),
+        onSuccess: () => {
+            toast.success("Password reset successfully. Please login with your new password.");
+            router.push("/home/auth/sign-in");
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.error || "Failed to reset password");
+        },
+    });
+};
+
+export const useVerifyEmail = () => {
+    const router = useRouter();
+    return useMutation({
+        mutationFn: (data: VerifyEmailRequest) => verifyEmail(data),
+        onSuccess: () => {
+            toast.success("Email verified successfully! Please log in.");
+            router.push("/home/auth/sign-in");
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.error || "Invalid verification code");
         },
     });
 };
