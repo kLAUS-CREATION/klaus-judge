@@ -9,13 +9,13 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen w-full relative flex items-center justify-center text-foreground">
-      <div className="relative w-[90%] max-w-7xl h-[90%] max-h-[800px] bg-linear-to-br from-primary/[0.003] to-secondary/[0.003] backdrop-blur-xl rounded-3xl overflow-hidden  border">
+    <div className="h-screen container mx-auto relative flex items-center justify-center text-foreground">
+      <div className="relative size-full">
         <div className="absolute top-5 left-5">
-            <h1> Klaus Judge </h1>
+          <h1> Klaus Judge </h1>
         </div>
         <div className="flex flex-col lg:flex-row h-full">
-          <div className="w-full lg:w-[45%] xl:w-[40%] flex flex-col gap-6 items-center justify-center p-8 lg:p-12">
+          <div className="w-full lg:w-[45%] xl:w-[40%] flex flex-col gap-6 items-center justify-center">
             <div className="w-full">{children}</div>
           </div>
 
