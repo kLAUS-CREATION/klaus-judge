@@ -5,6 +5,9 @@ import {
     RegisterRequest,
     User,
     UpdateProfileRequest,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    VerifyEmailRequest,
 } from "@/types/users";
 
 export const register = async (data: RegisterRequest): Promise<User> => {
@@ -31,4 +34,22 @@ export const updateProfile = async (
 ): Promise<User> => {
     const response = await apiClient.put<User>("/auth/profile", data);
     return response.data;
+};
+
+export const forgotPassword = async (
+    data: ForgotPasswordRequest
+): Promise<void> => {
+    await apiClient.post("/auth/forgot-password", data);
+};
+
+export const resetPassword = async (
+    data: ResetPasswordRequest
+): Promise<void> => {
+    await apiClient.post("/auth/reset-password", data);
+};
+
+export const verifyEmail = async (
+    data: VerifyEmailRequest
+): Promise<void> => {
+    await apiClient.post("/auth/verify-email", data);
 };
