@@ -178,7 +178,7 @@ export default function SignUp() {
                 <p className="mt-6 text-center text-sm text-foreground-secondary tracking-[1px]">
                     Already have an account?{" "}
                     <Link
-                        href="/home/auth/sign-in"
+                        href="/auth/sign-in"
                         className={`text-foreground font-semibold hover:underline ${isPending ? "pointer-events-none opacity-50" : ""
                             }`}
                     >
