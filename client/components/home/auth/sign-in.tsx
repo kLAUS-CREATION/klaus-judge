@@ -62,9 +62,9 @@ export default function SignIn() {
     }
 
     return (
-        <div className="size-full flex items-center justify-center p-4">
-            <div className="w-full space-y-8 rounded-2xl p-8 transition-all dark:ring-1 dark:ring-white/10 dark:backdrop-blur-xl">
-                <h2 className="text-2xl 2xl:text-3xl font-bold text-center mb-6 tracking-[1px]">
+        <div className="size-full flex items-center justify-center">
+            <div className="w-full space-y-8 rounded-lg transition-all">
+                <h2 className="text-2xl 2xl:text-3xl font-normal text-foreground  text-center mb-6 tracking-[2px]">
                     Welcome Back
                 </h2>
 
@@ -91,8 +91,8 @@ export default function SignIn() {
                                             {...field}
                                             type="email"
                                             disabled={isPending}
-                                            placeholder="you@example.com"
-                                            className="h-11 rounded-lg border-gray-300/30 focus:border-[#003087] focus:ring-[#003087] transition"
+                                            placeholder="klaus@example.com"
+                                            className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground-secondary"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -113,7 +113,7 @@ export default function SignIn() {
                                                 disabled={isPending}
                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="••••••••"
-                                                className="h-11 pr-10 rounded-lg border-gray-300/30 transition"
+                                                className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground-secondary"
                                             />
                                             <Button
                                                 type="button"
@@ -142,14 +142,14 @@ export default function SignIn() {
                         <div className="flex items-center justify-end">
                             <Link
                                 href="/login/forget-password"
-                                className={`text-sm font-semibold hover:underline ${isPending ? "pointer-events-none opacity-50" : ""
+                                className={`text-sm font-semibold hover:underline text-foreground-secondary ${isPending ? "pointer-events-none opacity-50" : ""
                                     }`}
                             >
                                 Forgot Password?
                             </Link>
                         </div>
 
-                        <Button variant={"default"} type="submit" disabled={isPending} className="w-full">
+                        <Button variant={"btn"} type="submit" disabled={isPending} className="w-full">
                             {isPending ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -162,11 +162,11 @@ export default function SignIn() {
                     </form>
                 </Form>
 
-                <p className="mt-6 text-center text-sm text-gray-500">
+                <p className="mt-6 text-center text-sm text-foreground-secondary tracking-[1px]">
                     Don&apos;t have an account?{" "}
                     <Link
-                        href="/home/auth/sign-up"
-                        className={`text-gray-900 font-semibold hover:underline ${isPending ? "pointer-events-none opacity-50" : ""
+                        href="/auth/sign-up"
+                        className={`text-foreground font-semibold hover:underline ${isPending ? "pointer-events-none opacity-50" : ""
                             }`}
                     >
                         Sign up
