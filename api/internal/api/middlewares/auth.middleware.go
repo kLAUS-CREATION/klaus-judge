@@ -11,7 +11,6 @@ import (
 	"github.com/klaus-creations/klaus-judge/api/internal/config"
 )
 
-// AuthMiddleware validates JWT token and sets user context.
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -59,7 +58,6 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-// AdminMiddleware checks if the user has admin role.
 func AdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role, exists := c.Get("role")
@@ -72,7 +70,6 @@ func AdminMiddleware() gin.HandlerFunc {
 	}
 }
 
-// validateJWT parses and validates the JWT token.
 func validateJWT(tokenStr string) (jwt.MapClaims, error) {
 	jwtSecret := config.GetEnv("JWT_SECRET", "your-secret-key")
 
