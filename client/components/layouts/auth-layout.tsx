@@ -42,16 +42,14 @@ export default function AuthLayout({
     <div className="h-screen w-full mx-auto relative flex items-center justify-center text-foreground bg-background">
       <div className="relative size-full flex flex-col lg:flex-row">
 
-        {/* LEFT SIDE: AUTH FORM */}
-        <div className="w-full lg:w-[40%] xl:w-[30%] flex flex-col items-center justify-center p-8 z-10 bg-background border-r border-border/40">
-            {/* Logo */}
+        <div className="w-full lg:w-[40%] xl:w-[30%] flex flex-col items-center justify-center z-10">
             <div className="absolute top-10 left-10 lg:left-12">
                 <h1 className="text-3xl font-black tracking-tighter uppercase italic">
                    <span className="text-primary">Klaus</span> Judge
                 </h1>
             </div>
 
-            <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <div className="w-full  animate-in fade-in slide-in-from-bottom-6 duration-1000">
                 {children}
             </div>
         </div>
