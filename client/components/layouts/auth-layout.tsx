@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+import Logo from "../shared/logo";
 
 const DSA_SESSIONS = [
   {
@@ -42,19 +43,14 @@ export default function AuthLayout({
     <div className="h-screen w-full mx-auto relative flex items-center justify-center text-foreground bg-background">
       <div className="relative size-full flex flex-col lg:flex-row">
 
-        <div className="w-full lg:w-[40%] xl:w-[30%] flex flex-col items-center justify-center z-10">
-            <div className="absolute top-10 left-10 lg:left-12">
-                <h1 className="text-3xl font-black tracking-tighter uppercase italic">
-                   <span className="text-primary">Klaus</span> Judge
-                </h1>
-            </div>
+        <div className="w-full lg:w-[40%] xl:w-[30%] flex flex-col items-start justify-center z-10 px-4 lg:px-6 2xl:px-8 space-y-8 lg:space-y-12">
+            <Logo />
 
             <div className="w-full  animate-in fade-in slide-in-from-bottom-6 duration-1000">
                 {children}
             </div>
         </div>
 
-        {/* RIGHT SIDE: DSA CAROUSEL */}
         <div className="relative hidden lg:flex lg:w-[60%] xl:w-[70%] h-full overflow-hidden bg-black">
             {DSA_SESSIONS.map((slide, i) => (
                 <div
@@ -89,9 +85,12 @@ export default function AuthLayout({
                             <div className="mt-10 h-1.5 w-32 bg-gradient-to-r from-primary to-secondary rounded-full" />
                         </div>
                     </div>
+
                 </div>
             ))}
         </div>
+
+
       </div>
     </div>
   );
