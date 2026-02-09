@@ -43,7 +43,12 @@ export default function AuthLayout({
     <div className="h-screen w-full mx-auto relative flex items-center justify-center text-foreground bg-background">
       <div className="relative size-full flex flex-col lg:flex-row">
 
-        <div className="w-full lg:w-[40%] xl:w-[30%] flex flex-col items-start justify-center z-10 px-4 lg:px-6 2xl:px-8 space-y-8 lg:space-y-12">
+        <div className="w-full lg:w-[40%] xl:w-[30%] flex flex-col items-start justify-center z-10 px-4 lg:px-6 2xl:px-8 space-y-8 lg:space-y-12 relative">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+                <div className="absolute -top-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-linear-to-b from-primary/5 to-secondary/10 blur-[120px]" />
+                <div className="absolute -bottom-0 -left-[10%] w-[40%] h-[40%] rounded-full bg-linear-to-b from-primary/5 to-secondary/4 blur-[120px]" />
+            </div>
+
             <Logo />
 
             <div className="w-full  animate-in fade-in slide-in-from-bottom-6 duration-1000">
@@ -68,7 +73,7 @@ export default function AuthLayout({
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-primary/15 to-secondary/25" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-primary/5 to-secondary/15" />
 
                     {/* LARGE TEXT CONTENT */}
                     <div className="absolute bottom-32 left-20 right-20 z-20">
