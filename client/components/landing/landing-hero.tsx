@@ -6,9 +6,9 @@ import Image from 'next/image';
 const Hero = () => {
   return (
     <section id="home" className="w-full h-screen container mx-auto flex items-center justify-between relative">
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-linear-to-b from-primary/5 to-secondary/10 blur-[120px]" />
-      </div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+            <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-linear-to-b from-primary/5 to-secondary/10 blur-[120px]" />
+        </div>
 
       <div className="w-full lg:w-[45%] flex flex-col space-y-2">
         <h1 className="text-3xl md:text-5xl font-normal text-foreground tracking-tight">
