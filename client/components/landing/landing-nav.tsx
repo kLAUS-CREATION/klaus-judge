@@ -12,9 +12,10 @@ const Navbar = () => {
           <Logo />
 
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-sm font-medium text-foreground-secondary hover:text-primary transition-colors">Features</a>
-            <a href="#problems" className="text-sm font-medium text-foreground-secondary hover:text-primary transition-colors">Problems</a>
-            <a href="#leaderboard" className="text-sm font-medium text-foreground-secondary hover:text-primary transition-colors">Leaderboard</a>
+
+            <Button variant={"btn2"}>
+                <Link href={'/auth/sign-in'}>Sign In </Link>
+            </Button>
 
             <Button variant={"btn"}>
                 <Link href={'/auth/sign-up'}>Sign Up </Link>
