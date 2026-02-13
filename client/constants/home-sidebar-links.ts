@@ -20,4 +20,9 @@ export const HomeSidebarLinks: IHomeSidebarLink[] = [
     name: "Contests",
     link: "/home/contests",
   },
+  {
+    name: "Rooms",
+    link: "/home/rooms",
+  },
+
 ];
