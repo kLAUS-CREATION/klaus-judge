@@ -40,7 +40,7 @@ const LandingPage = () => {
         <Features />
 
         <section className="px-4 text-center">
-          <div className="max-w-5xl mx-auto p-12 rounded-3xl bg-gradient-to-b from-card/70 to-primary/10 border border-border relative overflow-hidden">
+          <div className="max-w-5xl mx-auto p-12 rounded-xs bg-gradient-to-b from-card/70 to-primary/10 border border-border relative overflow-hidden">
             <h2 className="text-3xl lg:text-4xl font-normal mb-4 tracking-[1px]">Ready to ace your interview?</h2>
             <p className="text-foreground-secondary mb-8 tracking-[.5px]">Join thousands of developers who have leveled up their careers with CodeQuest.</p>
             <Button variant={'btn'}>
