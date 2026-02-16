@@ -65,10 +65,10 @@ export default function SignUp() {
     }
 
     return (
-        <div className="flex min-h-screen w-full items-center justify-center p-4">
+        <div className="flex  w-full items-center justify-center">
             <div className="w-full space-y-8 rounded-2xl transition-all dark:backdrop-blur-xl">
-                <h2 className="text-2xl 2xl:text-3xl font-bold text-center mb-6 tracking-[1px]">
-                    Create Account
+                <h2 className="text-2xl 2xl:text-3xl font-normal text-center mb-6 tracking-[2px]">
+                    Create An Account
                 </h2>
 
                 {serverError && (
@@ -88,13 +88,13 @@ export default function SignUp() {
                             name="fullName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Full Name</FormLabel>
+                                    <FormLabel className="text-foreground-secondary">Full Name</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             disabled={isPending}
                                             placeholder="John Doe"
-                                            className="h-11 rounded-lg border-gray-300/30 focus:border-[#003087] focus:ring-[#003087] transition"
+                                            className="h-13 rounded-xs mt-1 border focus:border-foreground-secondary transition text-foreground-secondary"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -102,38 +102,20 @@ export default function SignUp() {
                             )}
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="username"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Username</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="johndoe"
-                                            className="h-11 rounded-lg border-gray-300/30 focus:border-[#003087] focus:ring-[#003087] transition"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
 
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email Address</FormLabel>
+                                    <FormLabel className="text-foreground-secondary">Email Address</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             type="email"
                                             disabled={isPending}
                                             placeholder="you@example.com"
-                                            className="h-11 rounded-lg border-gray-300/30 focus:border-[#003087] focus:ring-[#003087] transition"
+                                            className="h-13 rounded-xs mt-1 border focus:border-foreground-secondary transition text-foreground-secondary"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -146,7 +128,7 @@ export default function SignUp() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel className="text-foreground-secondary"> Password </FormLabel>
                                     <FormControl>
                                         <div className="relative">
                                             <Input
@@ -154,7 +136,7 @@ export default function SignUp() {
                                                 disabled={isPending}
                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="••••••••"
-                                                className="h-11 pr-10 rounded-lg border-gray-300/30 transition"
+                                                className="h-13 rounded-xs mt-1 border focus:border-foreground-secondary transition text-foreground-secondary"
                                             />
                                             <Button
                                                 type="button"
@@ -180,7 +162,7 @@ export default function SignUp() {
                             )}
                         />
 
-                        <Button variant={"default"} type="submit" disabled={isPending} className="w-full">
+                        <Button variant={"btn"} type="submit" disabled={isPending} className="w-full">
                             {isPending ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -193,11 +175,11 @@ export default function SignUp() {
                     </form>
                 </Form>
 
-                <p className="mt-6 text-center text-sm text-gray-500">
+                <p className="mt-6 text-center text-sm text-foreground-secondary tracking-[1px]">
                     Already have an account?{" "}
                     <Link
-                        href="/home/auth/sign-in"
-                        className={`text-gray-900 font-semibold hover:underline ${isPending ? "pointer-events-none opacity-50" : ""
+                        href="/auth/sign-in"
+                        className={`text-foreground font-semibold hover:underline ${isPending ? "pointer-events-none opacity-50" : ""
                             }`}
                     >
                         Sign in

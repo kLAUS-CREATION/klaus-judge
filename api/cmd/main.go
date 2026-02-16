@@ -41,6 +41,7 @@ func main() {
 	routes.SetupRouter(r, db)
 
 	port := config.GetEnv("PORT", "8080")
+	fmt.Printf("this is the port %v \n", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("failed to start server:", err)
 	}

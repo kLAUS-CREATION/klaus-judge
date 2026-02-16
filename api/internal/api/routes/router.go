@@ -12,9 +12,40 @@ import (
 	"gorm.io/gorm"
 )
 
+
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		origin := c.Request.Header.Get("Origin")
+
+		allowedOrigins := map[string]bool{
+			"http://localhost:3000": true,
+			"http://localhost:3001": true,
+			"http://localhost:8080": true,
+		}
+
+		if allowedOrigins[origin] {
+			c.Header("Access-Control-Allow-Origin", origin)
+			c.Header("Access-Control-Allow-Credentials", "true")
+		}
+
+		c.Header("Access-Control-Allow-Headers",
+			"Content-Type, Authorization, X-Requested-With, Accept, Origin")
+		c.Header("Access-Control-Allow-Methods",
+			"GET, POST, PUT, PATCH, DELETE, OPTIONS")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
 // SetupRouter initializes all routes and dependencies
 func SetupRouter(r *gin.Engine, db *gorm.DB) {
-	// ********* DEPENDENCY INJECTION **************
+	// ********* CORS MIDDLEWARE **************
+	r.Use(CORSMiddleware())
 	// Repositories
 	userRepo := gormRepo.NewUserRepository(db)
 	problemRepo := gormRepo.NewProblemRepository(db)
@@ -32,35 +63,36 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 	problemHandler := handlers.NewProblemHandler(problemService)
 	submissionHandler := handlers.NewSubmissionHandler(submissionService)
 
-	// ********* RATE LIMITING **************
+	//  Rate Limiting
 	redisClient := config.GetRedisClient()
 
 	// 1. Global Limiter (IP Based): 1000 req / hour
 	// Helps prevent general abuse / scraping
 	r.Use(middlewares.NewRateLimiterMiddleware(redisClient, middlewares.Rate(1000, time.Hour), "limiter:global"))
 
-	// ************ ROUTES ****************************
-	// PUBLIC ROUTES
+	// ROUTES
+
+	// public routes
 	public := r.Group("/api/v1")
 	public.GET("/health", handlers.HealthCheck)
 
-	// AUTH ROUTES (Stricter Limits)
+	// auth routes
+	authGroup := public.Group("")
 	// 5 req / minute to prevent brute force
-	authGroup := public.Group("/auth")
 	authGroup.Use(middlewares.NewRateLimiterMiddleware(redisClient, middlewares.Rate(5, time.Minute), "limiter:auth"))
 	RegisterAuthRoutes(authGroup, authHandler)
 
-	// PROBLEM ROUTES
+	// problem routes
 	RegisterProblemRoutes(public, problemHandler)
 
-	// PROTECTED ROUTES
+	// protected routes
 	protected := r.Group("/api/v1")
 	protected.Use(middlewares.AuthMiddleware())
 
-	// USER ROUTES
+	// user routes
 	RegisterUserRoutes(protected, authHandler)
 
-	// SUBMISSION ROUTES (Very Strict)
+	// submission routes (Very Strict)
 	// 1 req / 10 seconds to prevent judge overload
 	submissionGroup := protected.Group("/submissions")
 	submissionGroup.Use(middlewares.NewUserRateLimiterMiddleware(redisClient, middlewares.Rate(1, 10*time.Second), "limiter:submission"))
@@ -69,7 +101,4 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 	submissionGroup.POST("", submissionHandler.SubmitSolution)
 	submissionGroup.GET("", submissionHandler.ListMySubmissions) // User's own submissions
 	submissionGroup.GET("/:id", submissionHandler.GetSubmission)
-
-	// Note: Admin list submissions route might need to be exempt or higher limit,
-	// but for now it shares the group. We can refactor if needed.
 }
