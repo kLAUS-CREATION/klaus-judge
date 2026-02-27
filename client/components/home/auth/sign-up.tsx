@@ -26,7 +26,6 @@ import { useRegister } from "@/lib/hooks/use-users";
 type FormValues = z.infer<typeof registerSchema>;
 
 export default function SignUp() {
-    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -43,6 +42,7 @@ export default function SignUp() {
     });
 
     function onSubmit(values: FormValues) {
+        console.log("these are values ", values);
         setServerError(null);
 
         mutate(
@@ -54,7 +54,6 @@ export default function SignUp() {
             },
             {
                 onSuccess: () => {
-                    // Redirect handled in hook
                 },
                 onError: (error: any) => {
                     console.error("Registration failed:", error);
@@ -71,12 +70,7 @@ export default function SignUp() {
                     Create An Account
                 </h2>
 
-                {serverError && (
-                    <div className="mb-6 p-3 rounded-md bg-destructive/15 text-destructive text-sm flex items-center gap-x-2 border border-destructive/20">
-                        <AlertCircle className="h-4 w-4" />
-                        <p>{serverError}</p>
-                    </div>
-                )}
+
 
                 <Form {...form}>
                     <form
@@ -94,13 +88,33 @@ export default function SignUp() {
                                             {...field}
                                             disabled={isPending}
                                             placeholder="John Doe"
-                                            className="h-13 rounded-xs mt-1 border focus:border-foreground-secondary transition text-foreground-secondary"
+                                            className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground tracking-[1px] font-bold placeholder:font-normal placeholder:text-foreground-tertiary"
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-foreground-secondary">Username</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isPending}
+                                            placeholder="John Doe"
+                                            className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground tracking-[1px] font-bold placeholder:font-normal placeholder:text-foreground-tertiary"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
 
 
                         <FormField
@@ -115,7 +129,7 @@ export default function SignUp() {
                                             type="email"
                                             disabled={isPending}
                                             placeholder="you@example.com"
-                                            className="h-13 rounded-xs mt-1 border focus:border-foreground-secondary transition text-foreground-secondary"
+                                            className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground tracking-[1px] font-bold placeholder:font-normal placeholder:text-foreground-tertiary"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -136,7 +150,7 @@ export default function SignUp() {
                                                 disabled={isPending}
                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="••••••••"
-                                                className="h-13 rounded-xs mt-1 border focus:border-foreground-secondary transition text-foreground-secondary"
+                                                className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground tracking-[1px] font-bold placeholder:font-normal placeholder:text-foreground-tertiary"
                                             />
                                             <Button
                                                 type="button"
@@ -161,6 +175,12 @@ export default function SignUp() {
                                 </FormItem>
                             )}
                         />
+                    {serverError && (
+                    <div className="mb-6 p-3 rounded-md bg-destructive/15 text-destructive text-sm flex items-center gap-x-2 border border-destructive/20">
+                        <AlertCircle className="h-4 w-4" />
+                        <p>{serverError}</p>
+                    </div>
+                )}
 
                         <Button variant={"btn"} type="submit" disabled={isPending} className="w-full">
                             {isPending ? (
