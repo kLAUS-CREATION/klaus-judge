@@ -56,7 +56,7 @@ const data = {
         },
         {
           title: "Create Problem",
-          url: "/admin/problems/create",
+          url: "/admin/problems/new",
         },
         {
           title: "Tags & Categories",

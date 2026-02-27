@@ -17,7 +17,8 @@ sqlx = { version = "0.7", features = [
     "runtime-tokio-native-tls",
     "postgres",
     "chrono",
-    "migrate"
+    "migrate",
+    "uuid"
 ] }
 
 # Serialization

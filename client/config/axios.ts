@@ -6,16 +6,23 @@ import {
   clearTokens,
 } from "@/lib/utils/cookies";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "localhost:5500";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 if (!apiUrl) {
-  throw new Error("Cannot get the backend url");
+  throw new Error(
+    "API_URL is not configured. Set NEXT_PUBLIC_API_URL in .env.local",
+  );
 }
 
+console.log("[Axios] Using API URL:", apiUrl);
+
 const apiClient = axios.create({
-  baseURL: apiUrl,
+  baseURL: `${apiUrl}/api/v1`,
   timeout: 50000,
   withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 apiClient.interceptors.request.use(
@@ -26,53 +33,73 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+// apiClient.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     const originalRequest = error.config;
 
-    // Prevent infinite loop
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
+//     if (
+//       error.response &&
+//       error.response.status === 401 &&
+//       !originalRequest._retry
+//     ) {
+//       originalRequest._retry = true;
 
-      try {
-        const refreshToken = getRefreshToken();
-        if (!refreshToken) {
-          throw new Error("No refresh token");
-        }
+//       try {
+//         const refreshToken = getRefreshToken();
+//         if (!refreshToken) {
+//           console.warn(
+//             "[Axios] No refresh token available, redirecting to login",
+//           );
+//           clearTokens();
+//           if (typeof window !== "undefined") {
+//             window.location.href = "/auth/sign-in";
+//           }
+//           throw new Error("No refresh token");
+//         }
 
-        const response = await axios.post(`${apiUrl}/auth/refresh`, {
-          refresh_token: refreshToken,
-        });
+//         console.log("[Axios] Attempting to refresh token...");
 
-        const { access_token, refresh_token: newRefreshToken } = response.data;
+//         const response = await axios.post(
+//           `${apiUrl}/api/v1/auth/refresh`,
+//           { refresh_token: refreshToken },
+//           { timeout: 10000 },
+//         );
 
-        setTokens(access_token, newRefreshToken); // New tokens from refresh endpoint
+//         const { access_token, refresh_token: newRefreshToken } = response.data;
 
-        // Retry logic
-        // Update header for this retry
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed (expired or invalid)
-        console.error("Refresh failed:", refreshError);
-        clearTokens();
-        if (typeof window !== "undefined") {
-          window.location.href = "/home/auth/sign-in";
-        }
-        return Promise.reject(refreshError);
-      }
-    }
+//         setTokens(access_token, newRefreshToken);
+//         console.log("[Axios] Token refreshed successfully");
 
-    return Promise.reject(error);
-  }
-);
+//         originalRequest.headers.Authorization = `Bearer ${access_token}`;
+//         return apiClient(originalRequest);
+//       } catch (refreshError) {
+//         console.error("[Axios] Token refresh failed:", refreshError);
+//         clearTokens();
+//         if (typeof window !== "undefined") {
+//           window.location.href = "/auth/sign-in";
+//         }
+//         return Promise.reject(refreshError);
+//       }
+//     }
+
+//     if (error.response) {
+//       console.error(
+//         "[Axios] Error:",
+//         error.response.status,
+//         error.response.data,
+//       );
+//     } else if (error.request) {
+//       console.error("[Axios] No response received:", error.request);
+//     } else {
+//       console.error("[Axios] Request error:", error.message);
+//     }
+
+//     return Promise.reject(error);
+//   },
+// );
 
 export default apiClient;

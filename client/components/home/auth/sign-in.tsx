@@ -68,12 +68,7 @@ export default function SignIn() {
                     Welcome Back
                 </h2>
 
-                {serverError && (
-                    <div className="mb-6 p-3 rounded-md bg-destructive/15 text-destructive text-sm flex items-center gap-x-2 border border-destructive/20">
-                        <AlertCircle className="h-4 w-4" />
-                        <p>{serverError}</p>
-                    </div>
-                )}
+
 
                 <Form {...form}>
                     <form
@@ -92,7 +87,7 @@ export default function SignIn() {
                                             type="email"
                                             disabled={isPending}
                                             placeholder="klaus@example.com"
-                                            className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground-secondary"
+                                            className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground tracking-[1px] font-bold placeholder:font-normal placeholder:text-foreground-tertiary"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -113,7 +108,7 @@ export default function SignIn() {
                                                 disabled={isPending}
                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="••••••••"
-                                                className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground-secondary"
+                                                className="h-13 rounded-xs border focus:border-foreground-secondary transition text-foreground tracking-[1px] font-bold placeholder:font-normal placeholder:text-foreground-tertiary"
                                             />
                                             <Button
                                                 type="button"
@@ -138,6 +133,11 @@ export default function SignIn() {
                                 </FormItem>
                             )}
                         />
+                {serverError && (
+                    <div className="mb-6 p-3 rounded-xs bg-destructive/3 text-foreground-secondary text-sm flex items-center gap-x-2 border border-destructive/5">
+                        <p>{serverError}</p>
+                    </div>
+                )}
 
                         <div className="flex items-center justify-end">
                             <Link

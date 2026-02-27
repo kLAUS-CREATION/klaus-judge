@@ -1,13 +1,5 @@
 import React from "react";
-
-
-const Header = () => {
-    return <div>Header</div>;
-}
-
-const MobileNav = () => {
-    return <div> Mobile Nav </div>
-}
+import { Header } from "../home/header/header";
 
 export default function HomeLayout({
   children,
@@ -16,21 +8,13 @@ export default function HomeLayout({
 }) {
   return (
     <div className="flex flex-col h-screen text-foreground overflow-hidden">
-      <Header />
+      <section className="w-full h-[10%]">
+        <Header />
+      </section>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="container mx-auto flex h-full">
-          <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col border-r shrink-0 h-full">
-            Header
-          </aside>
-
-          <main className="flex-1 min-w-0 h-full overflow-hidden">
-            {children}
-          </main>
-        </div>
-      </div>
-
-      <MobileNav />
+      <main className="container mx-auto h-[90%]">
+        {children}
+      </main>
     </div>
   );
 }

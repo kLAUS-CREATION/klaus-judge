@@ -31,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AppProviders>
-          <div className="size-full bg-background">{children}</div>
+          <div className="size-full bg-background overflow-y-auto">{children}</div>
           <Toaster />
         </AppProviders>
       </body>

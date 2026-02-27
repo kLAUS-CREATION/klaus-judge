@@ -36,15 +36,9 @@ export interface UpdateProfileRequest {
     username?: string;
 }
 
-export interface ForgotPasswordRequest {
-    email: string;
-}
 
-export interface ResetPasswordRequest {
-    password: string;
-    token: string;
-}
-
-export interface VerifyEmailRequest {
-    otp: string;
+export interface UserStats {
+    solved_problems: number;
+    rating: number;
+    last_login: string;
 }
